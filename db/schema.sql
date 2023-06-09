@@ -42,7 +42,7 @@ USE employee_db;
 
 -- Table for the department i.e.
 CREATE TABLE department (
-    id INT PRIMARY KEY AUTO_INCREMENT,
+    id INT AUTO_INCREMENT PRIMARY KEY,
     department_name VARCHAR(30) NOT NULL
 );
 
