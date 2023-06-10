@@ -16,16 +16,16 @@ const db = mysql.createConnection({
 const viewAllRoles = `
 SELECT position.title, position.salary, dept.deptName
     FROM role
-    JOIN department ON d.id = position.deptId;
+    JOIN department ON d.id = p.deptartmentId;
 `;
 
 // Query passed through to view employees and their associated roles 
 const viewEmployeeQuery =
-`SELECT emp.firstName, emp.lastName, position.title, position.salary, dept.deptName, concat(manager.firstName, ' ', manager.lastName) AS managerName
+`SELECT e.firstName, e.lastName, position.title, position.salary, d.deptName, concat(manager.firstName, ' ', manager.lastName) AS managerName
 FROM employee
-JOIN role ON roleId = employee.positionId
-JOIN department ON deptartmentId = position.deptId
-LEFT JOIN employee manager ON employeeMngId = employee.managerId
+JOIN position p ON e.positionId = p.positionId
+JOIN department d ON p.deptartmentId = p.deptId
+LEFT JOIN employeeManager e ON e.employeeMngId = employee.managerId
 `;
 
 // functions to add dept, role, & employee
@@ -95,9 +95,9 @@ function addNewEmployee(){
             },
             {
                 type: "list",
-                message: "What is the employee's role",
-                name: "roleId",
-                choices: roles
+                message: "What is the employee's position",
+                name: "positionId",
+                choices: positions
             },
             {
                 type: "input",
@@ -106,8 +106,8 @@ function addNewEmployee(){
             }
         ])
         .then(answers => {
-            db.query("INSERT INTO employee (first_name, last_name, role_id, manager_id) VALUES (?, ?, ?, ?)", 
-            [answers.firstName, answers.lastName, answers.roleId, answers.managerId], (err, dataRes) => {
+            db.query("INSERT INTO employee (firstName, lastName, positionId, employeeMngId) VALUES (?, ?, ?, ?)", 
+            [answers.firstName, answers.lastName, answers.positionId, answers.managerId], (err, dataRes) => {
                 mainMenu();
             })
         })
@@ -190,20 +190,20 @@ function mainMenu() {
                     mainMenu();
                 });
                 break;
-            case "add a department":
+            case "Add a Department":
                 addDept();
                 break;
-            case "add a role":
+            case "Add a Position":
                 addPosition();
                 break;
-            case "add a employee":
+            case "Add an Employee":
                 addNewEmployee();
                 break;
-            case "update a employee's role":
+            case "Update an Employee's Position":
                 updatePosition();
                 break;
                 default:
-                    console.log("Invalid action.");
+                    console.log("Ope, let's tru again.");
                     mainMenu();
                     break;
             }
