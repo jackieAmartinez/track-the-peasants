@@ -14,20 +14,19 @@ const db = mysql.createConnection({
 // Query that i pass through as a variable to view roles
 // variable for viewing & connecting tables
 const viewAllRoles = `
-SELECT r.title, r.salary, d.department_name
+SELECT position.title, position.salary, dept.deptName
     FROM role
-    JOIN department d ON d.id = r.department_id;
+    JOIN department ON d.id = position.deptId;
 `;
 
 // Query passed through to view employees and their associated roles 
 const viewEmployeeQuery =
-`
-SELECT e.first_name, e.last_name, r.title, r.salary, d.department_name, concat(m.first_name, ' ', m.last_name) AS manager_name
-FROM employee e 
-JOIN role r ON e.role_id = r.id
-JOIN department d ON r.department_id = d.id
-LEFT JOIN employee m ON e.manager_id = m.id
-`
+`SELECT emp.firstName, emp.lastName, position.title, position.salary, dept.deptName, concat(manager.firstName, ' ', manager.lastName) AS managerName
+FROM employee
+JOIN role ON roleId = employee.positionId
+JOIN department ON deptartmentId = position.deptId
+LEFT JOIN employee manager ON employeeMngId = employee.managerId
+`;
 
 // functions to add dept, role, & employee
 function addDept(){
@@ -158,16 +157,16 @@ function main() {
         .prompt([
         {
             type: 'list',
-            message: 'What would you like to choose?',
+            message: 'Select your next task from the following options:',
             name: 'action',
             choices: [
-                'view all departments',
-                'view all roles',
-                'view all employees',
-                'add a department',
-                'add a role',
-                'add a employee',
-                'update a employee role'
+                'View all Departments',
+                'View all Positions',
+                'View all Employees',
+                'Add a Department',
+                'Add a Position',
+                'Add an Employee',
+                'Update Employee Position'
             ],
         },
     ])
