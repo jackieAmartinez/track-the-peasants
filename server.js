@@ -13,7 +13,7 @@ const db = mysql.createConnection({
 
 // Query that i pass through as a variable to view roles
 // variable for viewing & connecting tables
-const viewAllRoles = `
+const viewAllPositions = `
 SELECT position.title, position.salary, dept.deptName
     FROM role
     JOIN department ON d.id = p.deptartmentId;
@@ -52,12 +52,12 @@ function addPosition(){
         .prompt ([
             {
                 type: "input",
-                message: "What is the title of the role would you like to add?",
-                name: "role"
+                message: "What is the title of the position would you like to add?",
+                name: "position"
             },
             {
                 type: "input",
-                message: "What is the annual salary for this role?",
+                message: "What is the annual salary for this position?",
                 name: "salary"
             },
             {
@@ -67,7 +67,7 @@ function addPosition(){
             }
         ])
         .then(answers => {
-            db.query("INSERT INTO ROLE (title, salary, deptId) VALUES (?, ?, ?)", 
+            db.query("INSERT INTO POSITION (title, salary, deptId) VALUES (?, ?, ?)", 
             [answers.role, answers.salary, answers.deptId], (err, dataRes) => {
                 mainMenu();
             })
@@ -77,20 +77,20 @@ function addPosition(){
 
 // Function to add a employee
 function addNewEmployee(){
-    db.query("SELECT * FROM ROLE", (err, data)=> {
-        const roles = data.map(row => {
+    db.query("SELECT * FROM POSITION", (err, data)=> {
+        const positions = data.map(row => {
             return {name: row.title, value: row.id}
         })
         inquirer
         .prompt ([
             {
                 type: "input",
-                message: "What is the employees first name?",
+                message: "What is the employee's first name?",
                 name: "firstName"
             },
             {
                 type: "input",
-                message: "What is the employees last name?",
+                message: "What is the employee's last name?",
                 name: "lastName"
             },
             {
@@ -102,12 +102,12 @@ function addNewEmployee(){
             {
                 type: "input",
                 message: "What is the manager id? (if manager enter NULL)",
-                name: "managerId"
+                name: "employeeMngId"
             }
         ])
         .then(answers => {
             db.query("INSERT INTO employee (firstName, lastName, positionId, employeeMngId) VALUES (?, ?, ?, ?)", 
-            [answers.firstName, answers.lastName, answers.positionId, answers.managerId], (err, dataRes) => {
+            [answers.firstName, answers.lastName, answers.positionId, answers.employeeMngId], (err, dataRes) => {
                 mainMenu();
             })
         })
@@ -116,12 +116,12 @@ function addNewEmployee(){
 
 // Function to update employee role
 function updatePosition(){
-    db.query("SELECT * FROM employee", (err, data)=> {
+    db.query("SELECT * FROM EMPLOYEE", (err, data)=> {
         const employees = data.map(row => { 
-            return {name: `${row.first_name} ${row.last_name}`, value: row.id}
+            return {name: `${row.firstName} ${row.lastName}`, value: row.id}
         });
-    db.query("SELECT * FROM role", (err, data) => {
-        const newRole = data.map(row => {
+    db.query("SELECT * FROM POSITION", (err, data) => {
+        const newPosition = data.map(row => {
             return {name: row.title, value: row.id}
         });
         console.log(employees)
@@ -129,20 +129,20 @@ function updatePosition(){
         .prompt([
             {
                 type: "list",
-                message: "Which employee's role would you like to update?",
+                message: "Which employee's position would you like to update?",
                 name: "employeeUpdate",
                 choices: employees
             },
             {
                 type: "list",
-                message: "What role would you like to assign the selected employee?",
-                name: "newRole",
-                choices: newRole
+                message: "What position would you like to assign the selected employee?",
+                name: "newPosition",
+                choices: newPosition
             }
         ])
         .then(answers => {
             console.log(answers)
-            db.query("UPDATE employee SET role_id = ? WHERE id = ?", [answers.newRole, answers.employeeUpdate], (err, data)=> {
+            db.query("UPDATE employee SET positionId = ? WHERE id = ?", [answers.newPosition, answers.employeeUpdate], (err, data)=> {
                 mainMenu();
             })
         })
@@ -172,19 +172,19 @@ function mainMenu() {
     ])
         .then((answers)=> {
         switch (answers.action) {
-            case "view all departments":
+            case "View all Departments":
                 db.query("SELECT * FROM departments;", (err, dataRes) => {
                     console.table(dataRes);
                     mainMenu();
                 });
                 break;
-            case "view all roles":
-                db.query(viewAllRoles, (err, dataRes) => {
+            case "View all Positions":
+                db.query(viewAllPositions, (err, dataRes) => {
                     console.table(dataRes);
                     mainMenu();
                 });
                 break;
-            case "view all employees":
+            case "View all Employees":
                 db.query(viewEmployeeQuery, (err, dataRes) => {
                     console.table(dataRes);
                     mainMenu();
