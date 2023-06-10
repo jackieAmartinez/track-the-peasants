@@ -34,14 +34,14 @@ function addDept(){
         .prompt([
             {
                 type: "input",
-                message: "What department would you like to add?",
+                message: "Enter new department name:",
                 name: "addDept"
             },
         ])
         .then(answers => {
-            db.query("INSERT INTO DEPARTMENT (department_name) VALUES (?)", 
-            [answers.addDep], (err, dataRes) => {
-                main();
+            db.query("INSERT INTO DEPARTMENT (deptName) VALUES (?)", 
+            [answers.addDept], (err, dataRes) => {
+                mainMenu();
             })
         })
 }
@@ -67,9 +67,9 @@ function addPosition(){
             }
         ])
         .then(answers => {
-            db.query("INSERT INTO ROLE (title, salary, department_id) VALUES (?, ?, ?)", 
+            db.query("INSERT INTO ROLE (title, salary, deptId) VALUES (?, ?, ?)", 
             [answers.role, answers.salary, answers.deptId], (err, dataRes) => {
-                main();
+                mainMenu();
             })
         })
 }
@@ -108,7 +108,7 @@ function addNewEmployee(){
         .then(answers => {
             db.query("INSERT INTO employee (first_name, last_name, role_id, manager_id) VALUES (?, ?, ?, ?)", 
             [answers.firstName, answers.lastName, answers.roleId, answers.managerId], (err, dataRes) => {
-                main();
+                mainMenu();
             })
         })
     })
@@ -143,7 +143,7 @@ function updatePosition(){
         .then(answers => {
             console.log(answers)
             db.query("UPDATE employee SET role_id = ? WHERE id = ?", [answers.newRole, answers.employeeUpdate], (err, data)=> {
-                main();
+                mainMenu();
             })
         })
     })
@@ -152,7 +152,7 @@ function updatePosition(){
 
 // Main function called in program, gives the user a list of choices
 // inside node terminal with the above scripts
-function main() {
+function mainMenu() {
     inquirer
         .prompt([
         {
@@ -173,21 +173,21 @@ function main() {
         .then((answers)=> {
         switch (answers.action) {
             case "view all departments":
-                db.query("SELECT * FROM department;", (err, dataRes) => {
+                db.query("SELECT * FROM departments;", (err, dataRes) => {
                     console.table(dataRes);
-                    main();
+                    mainMenu();
                 });
                 break;
             case "view all roles":
                 db.query(viewAllRoles, (err, dataRes) => {
                     console.table(dataRes);
-                    main();
+                    mainMenu();
                 });
                 break;
             case "view all employees":
                 db.query(viewEmployeeQuery, (err, dataRes) => {
                     console.table(dataRes);
-                    main();
+                    mainMenu();
                 });
                 break;
             case "add a department":
@@ -204,9 +204,9 @@ function main() {
                 break;
                 default:
                     console.log("Invalid action.");
-                    main();
+                    mainMenu();
                     break;
             }
         });
 }
-main()
+mainMenu()
