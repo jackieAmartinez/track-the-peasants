@@ -5,7 +5,7 @@ CREATE DATABASE employee_db;
 USE employee_db;
 
 -- Table for dept
-CREATE TABLE dept (
+CREATE TABLE department (
     id INT PRIMARY KEY AUTO_INCREMENT,
     deptName VARCHAR(30) NOT NULL
 );
@@ -26,7 +26,7 @@ CREATE TABLE employee (
     id INT PRIMARY KEY AUTO_INCREMENT,
     firstName VARCHAR(30),
     lastName VARCHAR(30),
-    positionId INT NOT NULL,
+    positionId INT,
     FOREIGN KEY (positionId)
     REFERENCES position(id),
     managerId INT,
