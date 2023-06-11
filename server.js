@@ -5,7 +5,7 @@ const mysql = require('mysql2');
 
 // set up sql server
 const db = mysql.createConnection({
-    host:'localhost',
+    host:'127.0.0.1',
     user: 'root',
     password: 'Penel0pe!!',
     database: 'employee_db'
@@ -27,6 +27,12 @@ JOIN position p ON e.positionId = p.positionId
 JOIN department d ON p.departmentId = p.deptId
 LEFT JOIN employeeManager e ON e.employeeMngId = employee.managerId
 `;
+
+function quit() {
+    // console.log(“Goodbye!“);
+    process.exit();
+  }
+
 
 // functions to add dept, role, & employee
 function addDept(){
@@ -166,7 +172,8 @@ function mainMenu() {
                 'Add a Department',
                 'Add a Position',
                 'Add an Employee',
-                'Update Employee Position'
+                'Update Employee Position',
+                'Quit'
             ],
         },
     ])
@@ -206,6 +213,8 @@ function mainMenu() {
                     console.log("Ope, let's tru again.");
                     mainMenu();
                     break;
+            case "Quit":
+                quit();
             }
         });
 }
