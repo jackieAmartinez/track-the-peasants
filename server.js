@@ -13,19 +13,28 @@ const db = mysql.createConnection({
 
 // Query that i pass through as a variable to view roles
 // variable for viewing & connecting tables
-const viewAllPositions = `
-SELECT position.title, position.salary, dept.deptName
+const viewAllRoles = `
+SELECT role.title, role.salary, role.departmentId
     FROM role
-    JOIN department ON d.id = p.departmentId
+    JOIN department ON d.id = r.departmentId
 `;
+
+// // Query passed through to view employees and their associated roles 
+// const viewEmployeeQuery =
+// `SELECT e.firstName, e.lastName, role.title, role.salary, d.deptName, concat(manager.firstName, ' ', manager.lastName) AS managerName
+// FROM employee
+// JOIN role p ON e.roleId = p.roleId
+// JOIN department d ON p.departmentId = p.deptId
+// LEFT JOIN employeeManager e ON e.employeeMngId = employee.managerId
+// `;
 
 // Query passed through to view employees and their associated roles 
 const viewEmployeeQuery =
-`SELECT e.firstName, e.lastName, position.title, position.salary, d.deptName, concat(manager.firstName, ' ', manager.lastName) AS managerName
+`SELECT e.firstName, e.lastName, role.title, role.salary, d.deptName, concat(manager.firstName, ' ', manager.lastName) AS managerName
 FROM employee
-JOIN position p ON e.positionId = p.positionId
-JOIN department d ON p.departmentId = p.deptId
-LEFT JOIN employeeManager e ON e.employeeMngId = employee.managerId
+JOIN role r ON e.roleId = role.id
+JOIN department d ON r.departmentId = dept.id
+LEFT JOIN employee m ON employee.managerId = m.id
 `;
 
 function quit() {
@@ -58,12 +67,12 @@ function addPosition(){
         .prompt ([
             {
                 type: "input",
-                message: "What is the title of the position would you like to add?",
-                name: "position"
+                message: "What is the title of the role would you like to add?",
+                name: "role"
             },
             {
                 type: "input",
-                message: "What is the annual salary for this position?",
+                message: "What is the annual salary for this role?",
                 name: "salary"
             },
             {
@@ -73,7 +82,7 @@ function addPosition(){
             }
         ])
         .then(answers => {
-            db.query("INSERT INTO POSITION (title, salary, deptId) VALUES (?, ?, ?)", 
+            db.query("INSERT INTO ROLE (title, salary, deptId) VALUES (?, ?, ?)", 
             [answers.role, answers.salary, answers.deptId], (err, dataRes) => {
                 mainMenu();
             })
@@ -83,8 +92,8 @@ function addPosition(){
 
 // Function to add a employee
 function addNewEmployee(){
-    db.query("SELECT * FROM POSITION", (err, data)=> {
-        const positions = data.map(row => {
+    db.query("SELECT * FROM ROLE", (err, data)=> {
+        const roles = data.map(row => {
             return {name: row.title, value: row.id}
         })
         inquirer
@@ -101,19 +110,19 @@ function addNewEmployee(){
             },
             {
                 type: "list",
-                message: "What is the employee's position",
-                name: "positionId",
-                choices: positions
+                message: "What is the employee's role?",
+                name: "roleId",
+                choices: roles
             },
             {
                 type: "input",
                 message: "What is the manager id? (if manager enter NULL)",
-                name: "employeeMngId"
+                name: "managerId"
             }
         ])
         .then(answers => {
-            db.query("INSERT INTO employee (firstName, lastName, positionId, employeeMngId) VALUES (?, ?, ?, ?)", 
-            [answers.firstName, answers.lastName, answers.positionId, answers.employeeMngId], (err, dataRes) => {
+            db.query("INSERT INTO employee (firstName, lastName, roleId, managerId) VALUES (?, ?, ?, ?)", 
+            [answers.firstName, answers.lastName, answers.roleId, answers.managerId], (err, dataRes) => {
                 mainMenu();
             })
         })
@@ -121,13 +130,13 @@ function addNewEmployee(){
 }
 
 // Function to update employee role
-function updatePosition(){
-    db.query("SELECT * FROM EMPLOYEE", (err, data)=> {
-        const employees = data.map(() => { 
+function updateRole(){
+    db.query("SELECT * FROM employee", (err, data) => {
+        const employees = data.map((row) => { 
             return {name: `${row.firstName} ${row.lastName}`, value: row.id}
         });
-    db.query("SELECT * FROM POSITION", (err, data) => {
-        const newPosition = data.map(row => {
+    db.query("SELECT * FROM role", (err, data) => {
+        const newRole = data.map((row) => {
             return {name: row.title, value: row.id}
         });
         console.log(employees)
@@ -135,20 +144,23 @@ function updatePosition(){
         .prompt([
             {
                 type: "list",
-                message: "Which employee's position would you like to update?",
+                message: "Which employee's role would you like to update?",
                 name: "employeeUpdate",
-                choices: employees
+                choices: employees,
             },
             {
                 type: "list",
-                message: "What position would you like to assign the selected employee?",
-                name: "newPosition",
-                choices: newPosition
-            }
+                message: "What role would you like to assign the selected employee?",
+                name: "newRole",
+                choices: newRole,
+            },
         ])
-        .then(answers => {
+        .then((answers) => {
             console.log(answers)
-            db.query("UPDATE employee SET positionId = ? WHERE id = ?", [answers.newPosition, answers.employeeUpdate], (err, data)=> {
+            db.query(
+                "UPDATE employee SET roleId = ? WHERE id = ?",
+                [answers.newRole, answers.employeeUpdate],
+                (err, data) => {
                 mainMenu();
             })
         })
@@ -167,12 +179,12 @@ function mainMenu() {
             name: 'action',
             choices: [
                 'View all Departments',
-                'View all Positions',
+                'View all Roles',
                 'View all Employees',
                 'Add a Department',
                 'Add a Position',
                 'Add an Employee',
-                'Update Employee Position',
+                'Update an Employee Position',
                 'Quit'
             ],
         },
@@ -180,19 +192,19 @@ function mainMenu() {
         .then((answers)=> {
         switch (answers.action) {
             case "View all Departments":
-                db.query("SELECT * FROM departments;", (err, dataRes) => {
+                db.query("SELECT * FROM department;", (err, dataRes) => {
                     console.table(dataRes);
                     mainMenu();
                 });
                 break;
-            case "View all Positions":
-                db.query(viewAllPositions, (err, dataRes) => {
+            case "View all Roles":
+                db.query("SELECT * FROM role;", (err, dataRes) => {
                     console.table(dataRes);
                     mainMenu();
                 });
                 break;
             case "View all Employees":
-                db.query(viewEmployeeQuery, (err, dataRes) => {
+                db.query("SELECT * FROM employee;", (err, dataRes) => {
                     console.table(dataRes);
                     mainMenu();
                 });
@@ -206,8 +218,8 @@ function mainMenu() {
             case "Add an Employee":
                 addNewEmployee();
                 break;
-            case "Update an Employee's Position":
-                updatePosition();
+            case "Update an Employee's Role":
+                updateRole();
                 break;
                 default:
                     console.log("Ope, let's tru again.");
