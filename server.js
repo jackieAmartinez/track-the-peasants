@@ -16,7 +16,7 @@ const db = mysql.createConnection({
 const viewAllPositions = `
 SELECT position.title, position.salary, dept.deptName
     FROM role
-    JOIN department ON d.id = p.deptartmentId;
+    JOIN department ON d.id = p.departmentId
 `;
 
 // Query passed through to view employees and their associated roles 
@@ -24,7 +24,7 @@ const viewEmployeeQuery =
 `SELECT e.firstName, e.lastName, position.title, position.salary, d.deptName, concat(manager.firstName, ' ', manager.lastName) AS managerName
 FROM employee
 JOIN position p ON e.positionId = p.positionId
-JOIN department d ON p.deptartmentId = p.deptId
+JOIN department d ON p.departmentId = p.deptId
 LEFT JOIN employeeManager e ON e.employeeMngId = employee.managerId
 `;
 
@@ -117,7 +117,7 @@ function addNewEmployee(){
 // Function to update employee role
 function updatePosition(){
     db.query("SELECT * FROM EMPLOYEE", (err, data)=> {
-        const employees = data.map(row => { 
+        const employees = data.map((row) => { 
             return {name: `${row.firstName} ${row.lastName}`, value: row.id}
         });
     db.query("SELECT * FROM POSITION", (err, data) => {

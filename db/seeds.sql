@@ -1,10 +1,12 @@
-INSERT INTO dept(deptName)
+use employee_db;
+
+INSERT INTO department(deptName)
 VALUES ('Accounting'),
        ('Sales'),
        ('Customer Service'),
        ('Warehouse');
 
-Insert INTO position(title, salary, deptartmentId)
+Insert INTO position(title, salary, departmentId)
 VALUES  ('Accountant', 40000, 1),
         ('Sales Representative', 50000, 2),
         ('Manager', 100000, 2),
