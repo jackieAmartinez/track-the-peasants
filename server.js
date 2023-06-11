@@ -117,7 +117,7 @@ function addNewEmployee(){
 // Function to update employee role
 function updatePosition(){
     db.query("SELECT * FROM EMPLOYEE", (err, data)=> {
-        const employees = data.map((row) => { 
+        const employees = data.map(() => { 
             return {name: `${row.firstName} ${row.lastName}`, value: row.id}
         });
     db.query("SELECT * FROM POSITION", (err, data) => {

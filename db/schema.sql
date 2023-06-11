@@ -11,7 +11,7 @@ CREATE TABLE department (
 );
 
 -- Table for job titles
-CREATE TABLE position (
+CREATE TABLE role (
     id INT PRIMARY KEY AUTO_INCREMENT NOT NULL,
     title VARCHAR(30),
     salary DECIMAL, 
@@ -25,9 +25,9 @@ CREATE TABLE employee (
     id INT PRIMARY KEY AUTO_INCREMENT NOT NULL,
     firstName VARCHAR(30),
     lastName VARCHAR(30),
-    positionId INT,
-    FOREIGN KEY (positionId)
-    REFERENCES position(id),
+    roleId INT,
+    FOREIGN KEY (roleId)
+    REFERENCES role(id),
     managerId INT,
     FOREIGN KEY (managerId)
     REFERENCES employee(id)
