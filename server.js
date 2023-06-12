@@ -62,7 +62,7 @@ function addDept(){
 }
 
 // Function to add a role
-function addPosition(){
+function addRole(){
     inquirer
         .prompt ([
             {
@@ -82,7 +82,7 @@ function addPosition(){
             }
         ])
         .then(answers => {
-            db.query("INSERT INTO ROLE (title, salary, deptId) VALUES (?, ?, ?)", 
+            db.query("INSERT INTO ROLE (title, salary, departmentId) VALUES (?, ?, ?)", 
             [answers.role, answers.salary, answers.deptId], (err, dataRes) => {
                 mainMenu();
             })
@@ -133,11 +133,11 @@ function addNewEmployee(){
 function updateRole(){
     db.query("SELECT * FROM employee", (err, data) => {
         const employees = data.map((row) => { 
-            return {name: `${row.firstName} ${row.lastName}`, value: row.id}
+            return { name: `${row.firstName} ${row.lastName}`, value: row.id};
         });
     db.query("SELECT * FROM role", (err, data) => {
         const newRole = data.map((row) => {
-            return {name: row.title, value: row.id}
+            return { name: row.title, value: row.id};
         });
         console.log(employees)
     inquirer
@@ -182,9 +182,9 @@ function mainMenu() {
                 'View all Roles',
                 'View all Employees',
                 'Add a Department',
-                'Add a Position',
+                'Add a Role',
                 'Add an Employee',
-                'Update an Employee Position',
+                'Update an Employee Role',
                 'Quit'
             ],
         },
@@ -212,8 +212,8 @@ function mainMenu() {
             case "Add a Department":
                 addDept();
                 break;
-            case "Add a Position":
-                addPosition();
+            case "Add a Role":
+                addRole();
                 break;
             case "Add an Employee":
                 addNewEmployee();
@@ -222,7 +222,7 @@ function mainMenu() {
                 updateRole();
                 break;
                 default:
-                    console.log("Ope, let's tru again.");
+                    console.log("Ope, let's try again.");
                     mainMenu();
                     break;
             case "Quit":
