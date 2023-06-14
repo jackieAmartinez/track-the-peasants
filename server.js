@@ -218,7 +218,7 @@ function mainMenu() {
             case "Add an Employee":
                 addNewEmployee();
                 break;
-            case "Update an Employee's Role":
+            case "Update an Employee Role":
                 updateRole();
                 break;
                 default:
