@@ -16,6 +16,8 @@
 
 Utilizing MySQL, Node.js, and Inquirer, this project is intended to mange and organize any company's employee database by creating a command-line application.
 
+![1686796971249](image/README/1686796971249.png)
+
 ### Installation
 
 [Application Video Walkthrough](https://drive.google.com/file/d/1UamKv27OU6ngi3p2AbsBF04SKTAMyHRD/view)
